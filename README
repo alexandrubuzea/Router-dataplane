@@ -1,0 +1,52 @@
+## Homework 1: Communication Protocols (Buzea Alexandru-Mihai-Iulian, 321CAb)
+
+1. INTRODUCTION
+
+    During this homework I was needed to implement the dataplane of a router,
+based on the details given in the homework formulation. There were three main
+protocols used together: **IPv4**, **ICMP** and **ARP**.
+
+2. The main structure
+
+    My code consists of a while(1) loop which is used to receive incoming
+packages. All packages have an *Ethernet header* that is used to send the
+packet (frame) at the Data Link level in the local network. Using this
+header, we can find out which type of packet we have. In this homework,
+the only types we were interested in were **IPv4** packets (some of them
+being treated as **ICMP** packets) and **ARP** packets.
+
+3. IPv4 and forwarding
+
+    I used a static routing table (without implementing routing protocols
+such as OSPF for dynamic routing) in which I stored entries (structs in C)
+containing the prefix, mask, interface and the IP address of the next hop.
+In order to determine the next hop's entry corresponding to the given IP
+address of the destination (in the packet), I used the longest prefix match
+algorithm together with binary search, in order to have a fast search, in
+O(log n) complexity. As a prerequisite, I sorted the routing table ascending
+with respect to the prefix (which is actually prefix & mask) and then after
+mask (as a sorting criteria).
+
+4. ARP reply and request
+
+    I used a dynamic ARP table in order to store MAC address - IPv4 address
+pairs in order to be used in the forwarding process. The table was filled
+by receiving ARP replies made by other entities in the network to our requests.
+Also, the router is capable of responding to ARP requests sent by other
+entities.
+
+5. ICMP
+
+    The router is also able to respond and to send ICMP packets and errors
+(Time Exceeded and Destination Unreachable error types). For example, if
+the time-to-live of a packet has expired, the router sends an ICMP error
+message (Time Exceeded type), or if the LPM algorithm gave no results
+(no associated addresses with the given one in the routing table).
+
+6. Using the last year's functions
+
+    As a response to a colleague's question (during Communication Protocols
+course), our professor told that, if we use functions from the last year's
+skel, we shold mention that in the README and the comments. By this, I mean
+that the functions used (send_icmp(), send_icmp_error() and send_arp()) were
+***not*** written by myself and are not my property.
